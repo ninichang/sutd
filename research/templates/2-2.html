@@ -1,0 +1,90 @@
+{% extends 'bar.html' %}
+
+{% block title %} Research {% endblock %}
+{% block head %} 
+{% endblock %}
+
+{% block content %}
+
+<div id="register-div">
+    <div>
+        <p> <strong>Below are several reasonings given by other participants. </br>
+            Please give each reasoning a score based on the following dimensions. </br>
+            <br>
+            The score ranges from 1 to 5.  
+            A score of 5 implies that the reasoning successfully fulfilles the dimension.
+            </strong>
+        </p>
+    </div>
+    <br>
+
+
+    {% for reasoning in reasonings %}
+    <div class="ui padded segment"> 
+        <p> 
+            {{reasoning}}
+        </p>
+    </div>
+    <br>
+
+    <div id="multiple-scale-form">
+    <p id='question'> Does this reasoning fulfill the following dimensions? </p>
+
+        {% for dimension in dimensions %}
+            <div class="ui form">
+                    <div class="inline fields">
+                        <label> 
+                            {{dimension}}: 
+                        </label>
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
+                                        <label>1</label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
+                                        <label>2</label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
+                                        <label>3</label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
+                                        <label>4</label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
+                                        <label>5</label>
+                                </div>
+                            </div>
+                    </div>
+                          
+            </div>
+        {% endfor %}
+        <div class="ui hidden divider"></div>
+
+    </div>
+    {% endfor %}
+
+    <button class="ui brown button" id="submit">Submit</button>
+    <div class="bottom"></div>
+
+</div>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,68 @@
+{% extends 'part1bar.html' %}
+
+{% block title %} Research {% endblock %}
+
+{% block head %} 
+{% endblock %}
+
+{% block content %}
+
+<div id="register-div">
+  <p> User name:</p>
+  <div class="ui fluid input"> 
+      <input type="text">
+  </div>
+
+  <br>
+
+  <p> Email: </p>
+  <div class="ui fluid input"> 
+      <input type="text">
+  </div>
+
+  <br>
+  <p> Do you agree with {{ issue }} ?</p>
+  <div class="wrap">
+          <form action="">
+            <label class="statement"></label>
+            <ul class='likert'>
+              <li>
+                <input type="radio" name="original_stance" value='5'>
+                <label> Strongly agree </label>
+              </li>
+              <li>
+                <input type="radio" name="original_stance" value='4'>
+                <label> Agree </label>
+              </li>
+              <li>
+                <input type="radio" name="original_stance" value='3'>
+                <label>Neutral</label>
+              </li>
+              <li>
+                <input type="radio" name="original_stance" value='2'>
+                <label>Disagree</label>
+              </li>
+              <li>
+                <input type="radio" name="original_stance" value='1'>
+                <label>Strongly disagree</label>
+              </li>
+            </ul>
+          </form>
+        </div>
+
+  <div class="ui form">
+      <p> Why or why not? </p>
+          <div class="field">
+              <textarea></textarea>
+          </div>
+  <br>
+
+  <button class="ui brown button" id="submit">Submit</button>
+
+  <div class="bottom">
+  </div>
+  
+</div>
+{% endblock %}
+
+

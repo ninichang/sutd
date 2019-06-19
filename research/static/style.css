@@ -1,0 +1,151 @@
+/* the body selector doesn't load the picture, so I load the background image 
+in inline css inside html files.  */
+
+.bodyFirstPage {
+    text-align: center;
+    padding-top: 30vh;
+    background-repeat: no-repeat; 
+    background-size: cover;
+    color: whitesmoke;
+    font-size: 2.5vh;
+}
+
+.button.ui.inverted.grey.button.register{
+    font-size: 2.3vh;
+}
+
+.button.ui.inverted.grey.button.login{
+    font-size: 2.3vh;
+}
+
+.topBar{
+    background: #3F2209;
+    height: 15vh;
+}
+
+#part1{
+    color:whitesmoke;
+    font-size: 4vh;
+    position: relative;
+    top:25%;
+    left:8%;
+}
+
+#register-div{
+    width: 50%;
+    position: relative;
+    top: 10%;
+    left: 25%
+}
+
+form .statement {
+  display:block;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 30px 0 0 4.25%;
+  margin-bottom:10px;
+}
+
+form .likert {
+  list-style:none;
+  width:100%;
+  margin:0;
+  padding:0 0 35px;
+  display:block;
+  border-bottom:2px solid #efefef;
+}
+
+form .likert:last-of-type {border-bottom:0;}
+
+form .likert:before {
+  content: '';
+  position:relative;
+  top:11px;
+  left:9.5%;
+  display:block;
+  background-color:#efefef;
+  height:4px;
+  width:78%;
+}
+
+.wrap{
+    font-size: 2vh;
+}
+
+form .likert li {
+  display:inline-block;
+  width:19%;
+  text-align:center;
+  vertical-align: top;
+}
+
+form .likert li input[type=radio] {
+  display:block;
+  position:relative;
+  top:0;
+  left:50%;
+  margin-left:-6px;
+  
+}
+form .likert li label {width:100%;}
+
+form .buttons {
+  margin:30px 0;
+  padding:0 4.25%;
+  text-align:right
+} 
+
+
+#submit{
+    position: relative;
+    left: 35%;
+    width:15vw;
+    font-size: 2.3vh;
+}
+
+.button#submit:hover{
+    background-color: #3F2209;
+}
+
+.bottom{
+    padding-bottom: 10vh;
+}
+
+#inputUserName {
+    background-color: transparent;
+    width:30%;
+    border: none;
+    border-bottom: 1px solid #CCC;
+    color: #CCC;
+    text-align: center;
+}
+
+.thankYou{
+    font-size: 2.5vh;
+    padding-top: 20%;
+    text-align: center
+}
+
+#question{
+    font-size: 2.5vh;
+    color: #3F2209;
+}
+
+#multiple-scale-form{
+    position: relative;
+    padding-left: 5%;
+
+}
+
+body {
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+    min-width:320px;
+    background:#fff;
+    font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    font-size:2.3vh;
+    line-height:1.4285em;
+    color:rgba(0,0,0,.87);
+    font-smoothing:antialiased
+}
