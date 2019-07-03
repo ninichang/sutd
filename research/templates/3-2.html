@@ -1,93 +1,104 @@
-{% extends 'bar.html' %}
+<!doctype html>
+<html lang="en">
+    
+<head>
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
+    <title> Research </title>
+</head>
 
-{% block title %} Research {% endblock %}
-{% block head %} 
-{% endblock %}
-
-{% block content %}
-
-<p> {{reasonings_3}} </p>
-<div id="register-div">
-    <div>
-        <p> <strong>Below are 9 reasonings with assigned scores. </br>
-                Based on you own opinion, please indicate how fair you think the score for each reasoning is on a 1 to 5 scale. </br> A fairness score of 5 implies that you think the score given to the reasoning is perfectly fair.                
-            </strong>
-        </p>
+<body>
+    <div class="topBar">
+        <p id="welcome-back"> Welcome back, {{user}} </p>
     </div>
-    <br>
-
-
-<!-- The name tag inside each submission is what will get back to the server
-e.g. name="fruit_1" + value="apple" will send back fruit_1 as apple
--->
-
-    <form>
-        {% for reasoning in reasonings_3 %}
-        <div class="ui padded segment"> 
-            <p> 
-                {{reasoning}}
+    
+<div id="register-div">
+        <div>
+            <p> <strong>Below are 9 reasonings with assigned scores. 
+                    Based on you own opinion, please indicate how fair you think the score for each reasoning is on a 1 to 5 scale. 
+                    
+                    A fairness score of 5 implies that you think the score given to the reasoning is perfectly fair.                
+                </strong>
             </p>
         </div>
         <br>
-
-        <div id="multiple-scale-form">
-        <p id='question'> Does this reasoning fulfill the following dimensions? </p>
-
-            {% for fair_dim in fair_dims %}
-                <div class="ui form">
-                        <div class="inline fields">
-                            <label> 
-                                {{fair_dim}}: 
-                            </label>
-                                <div class="field">
-                                    <div class="ui radio checkbox">
-                                        <input type="radio" name="change_this_part_should_be_reasoning_id" value=1>
-                                            <label>1</label>
+    
+    
+        <form action='/end' method='POST'>
+            {% for reasoning_id, received_score in reasonings_3.items() %}
+            <div class="ui padded segment"> 
+                <p> 
+                    {{reasoning_id}}
+                </p>
+                <p>
+                    Score: {{received_score}}
+                </p>
+            </div>
+            <br>
+    
+            <div id="multiple-scale-form">
+            <p id='question'> How fair is the given score in the following dimensions? </p>
+    
+                {% for fair_dim_id, fair_dim in fair_dims.items() %}
+                    <div class="ui form">
+                            <div class="inline fields">
+                                <label> 
+                                    {{fair_dim}}: 
+                                </label>
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='1'>
+                                                <label>1</label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="field">
-                                    <div class="ui radio checkbox">
-                                        <input type="radio" name="change_this_part_should_be_reasoning_id" value=2>
-                                            <label>2</label>
+    
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='2'>
+                                                <label>2</label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="field">
-                                    <div class="ui radio checkbox">
-                                        <input type="radio" name="change_this_part_should_be_reasoning_id" value=3>
-                                            <label>3</label>
+    
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='3'>
+                                                <label>3</label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="field">
-                                    <div class="ui radio checkbox">
-                                        <input type="radio" name="change_this_part_should_be_reasoning_id" value=4>
-                                            <label>4</label>
+    
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='4'>
+                                                <label>4</label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="field">
-                                    <div class="ui radio checkbox">
-                                        <input type="radio" name="change_this_part_should_be_reasoning_id" value=5>
-                                            <label>5</label>
+    
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='5'>
+                                                <label>5</label>
+                                        </div>
                                     </div>
-                                </div>
-                        </div>
-                </div>
+                            </div>
+                    </div>
+                {% endfor %}
+                <div class="ui hidden divider"></div>
+            </div>
             {% endfor %}
-            <div class="ui hidden divider"></div>
-        </div>
-        {% endfor %}
-    </form>
+    
+    
+            <br>
+            <button class="ui brown button" id="submit">Submit</button>
+            <div class="bottom"></div>
+    
+        </form>
+    </div>
+</body>
 
-    <br>
-    <button class="ui brown button" id="submit">Submit</button>
-    <div class="bottom"></div>
-
-</div>
-
-
-{% endblock %}
-
+</html>
 

@@ -31,6 +31,15 @@ in inline css inside html files.  */
     left:8%;
 }
 
+
+#welcome-back{
+    color:whitesmoke;
+    font-size: 2.5vh;
+    position: relative;
+    top:40%;
+    left:8%;
+}
+
 #register-div{
     width: 50%;
     position: relative;
@@ -120,6 +129,12 @@ form .buttons {
     text-align: center;
 }
 
+#inputUserName:hover {
+    background-color: transparent;
+    width:30%;
+}
+
+
 .thankYou{
     font-size: 2.5vh;
     padding-top: 20%;
@@ -133,7 +148,7 @@ form .buttons {
 
 #multiple-scale-form{
     position: relative;
-    padding-left: 5%;
+    padding-left: 3%;
 
 }
 
@@ -144,8 +159,20 @@ body {
     min-width:320px;
     background:#fff;
     font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
-    font-size:2.3vh;
+    font-size:2.2vh;
     line-height:1.4285em;
     color:rgba(0,0,0,.87);
     font-smoothing:antialiased
+}
+
+::placeholder{
+    color: white;
+    font-size: 2vh;
+    font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+}
+
+
+.loginDiv{
+    text-align: center;
+    display: block;
 }

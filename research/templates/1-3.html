@@ -6,13 +6,25 @@
 {% endblock %}
 
 {% block content %}
+<div id="register-div">
+    <div class='wrap'>
+        <form id='stage1Stance' method="POST">
+            <p style='font-size:2.3vh'> If you were to {{ session['oppo_stance']}} with the policy,
+                what could have been your reasoning?
+            </p>
+            <br>
 
-<div>
-    <p> If you were to disagree with the policy,
-            what could have been your reasoning?</p>
+            <div class="ui form">
+                        <div class="field">
+                            <textarea name='oppo_reasoning'></textarea>
+                        </div>
+                <br>
+            </div>
+            <input type="submit" class="ui brown button" id="submit" onclick="window.location='thank_you'">
+            </input>
+        </form>
+    </div>
 </div>
-
-
 {% endblock %}
 
 

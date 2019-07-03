@@ -1,0 +1,26 @@
+{% extends 'bar.html' %}
+
+{% block title %} Research {% endblock %}
+{% block head %} 
+{% endblock %}
+
+{% block content %}
+
+<div id="register-div">
+    <div>
+        <p> 
+            Hello, {{user}} 
+        </p>
+        <p>
+            It seems like you have not yet registered for an account to this website. <br>
+            Please click the following to register, thank you.
+        </p>
+    </div>
+    <br>
+        <button class="ui brown button" id="submit" onclick="window.location='1-1'">Register</button>
+</div>
+
+
+{% endblock %}
+
+

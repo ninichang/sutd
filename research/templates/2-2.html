@@ -1,90 +1,99 @@
-{% extends 'bar.html' %}
+<!doctype html>
+<html lang="en">
+    
+<head>
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"></link>
+    <title> Research </title>
+</head>
 
-{% block title %} Research {% endblock %}
-{% block head %} 
-{% endblock %}
-
-{% block content %}
-
-<div id="register-div">
-    <div>
-        <p> <strong>Below are several reasonings given by other participants. </br>
-            Please give each reasoning a score based on the following dimensions. </br>
-            <br>
-            The score ranges from 1 to 5.  
-            A score of 5 implies that the reasoning successfully fulfilles the dimension.
-            </strong>
-        </p>
+<body>
+    <div class="topBar">
+        <p id="welcome-back"> Welcome back, {{user}} </p>
     </div>
-    <br>
+    <div id="register-div">
+        <div>
+            <p> <strong>Below are several reasonings given by other participants. </br>
+                Please give each reasoning a score based on the following dimensions. </br>
+                <br>
+                The score ranges from 1 to 5.  
+                A score of 5 implies that the reasoning successfully fulfilles the dimension.
+                </strong>
+            </p>
+        </div>
+        <br>
 
-
-    {% for reasoning in reasonings %}
-    <div class="ui padded segment"> 
-        <p> 
-            {{reasoning}}
-        </p>
-    </div>
-    <br>
-
-    <div id="multiple-scale-form">
-    <p id='question'> Does this reasoning fulfill the following dimensions? </p>
-
-        {% for dimension in dimensions %}
-            <div class="ui form">
-                    <div class="inline fields">
-                        <label> 
-                            {{dimension}}: 
-                        </label>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
-                                        <label>1</label>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
-                                        <label>2</label>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
-                                        <label>3</label>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
-                                        <label>4</label>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" name="should_be_changed_to_reasoning_id_plus_dimension_id" checked="checked">
-                                        <label>5</label>
-                                </div>
-                            </div>
-                    </div>
-                          
+        <form action="/thank_you" method='POST'>
+            {% for reason_id, reason in reasonings.items() %}
+            <div class="ui padded segment"> 
+                <p> 
+                    {{reason}}
+                </p>
             </div>
-        {% endfor %}
-        <div class="ui hidden divider"></div>
+            <br>
 
+            <div id="multiple-scale-form">
+            <p id='question'> Does this reasoning fulfill the following dimensions? </p>
+
+                {% for dim_id, dim in dimensions.items() %}
+                    <div class="ui form">
+                            <div class="inline fields">
+                                <label> 
+                                    {{dim}}: 
+                                </label>
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" id='1' name={{reason_id~dim_id}} value='1'>
+                                                <label>1</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" id='2' name={{reason_id~dim_id}} value='2'>
+                                                <label>2</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" id='3' name={{reason_id~dim_id}} value='3'>
+                                                <label>3</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" id='4' name={{reason_id~dim_id}} value='4'>
+                                                <label>4</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="ui radio checkbox">
+                                            <input type="radio" id='5' name={{reason_id~dim_id}} value='5'>
+                                                <label>5</label>
+                                        </div>
+                                    </div>
+                            </div>
+                                
+                    </div>
+                {% endfor %}
+                <div class="ui hidden divider"></div>
+
+            </div>
+            {% endfor %}
+
+            <button class="ui brown button" id="submit">Submit</button>
+            <div class="bottom"></div>
+        </form>
     </div>
-    {% endfor %}
+</body>
 
-    <button class="ui brown button" id="submit">Submit</button>
-    <div class="bottom"></div>
-
-</div>
-
-
-{% endblock %}
-
+</html>
 
