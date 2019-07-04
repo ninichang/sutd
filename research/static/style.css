@@ -21,14 +21,15 @@ in inline css inside html files.  */
 .topBar{
     background: #3F2209;
     height: 15vh;
+    width: 100vw;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 #part1{
     color:whitesmoke;
     font-size: 4vh;
-    position: relative;
-    top:25%;
-    left:8%;
+    padding-left: 5vh;
 }
 
 
@@ -106,9 +107,8 @@ form .buttons {
 
 
 #submit{
-    position: relative;
-    left: 35%;
-    width:15vw;
+    text-align: center;
+    margin-left: 15vw;
     font-size: 2.3vh;
 }
 
@@ -175,4 +175,8 @@ body {
 .loginDiv{
     text-align: center;
     display: block;
+}
+
+#form-2-2-style{
+    font-size: 2vh
 }

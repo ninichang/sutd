@@ -8,23 +8,42 @@
 {% block content %}
 <div id="register-div">
     <div class='wrap'>
-        <form id='stage1Stance' method="POST">
-            <p style='font-size:2.3vh'> If you were to {{ session['oppo_stance']}} with the policy,
+        <form id='form-1-3' method="POST" action='/thank_you'>
+            <p style='font-size:2.3vh'> If you were to <b>{{ session['oppo_stance']}}</b> with the policy,
                 what could have been your reasoning?
             </p>
             <br>
 
             <div class="ui form">
                         <div class="field">
+                            <input type="hidden" name="oppo_reasoning_input">
                             <textarea name='oppo_reasoning'></textarea>
                         </div>
                 <br>
             </div>
-            <input type="submit" class="ui brown button" id="submit" onclick="window.location='thank_you'">
+            <div class="ui warning message" style="display: none" id='warning'>
+                    Please enter your response, thank you.
+            </div>
+            <input type="submit" class="ui brown button" id="submit">
             </input>
         </form>
     </div>
 </div>
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type='text/javascript'>
+
+$('#submit').click(function(event) {
+    if (!document.getElementById('form-1-3').oppo_reasoning.value){
+        event.preventDefault();
+        $('#warning').show();
+    }
+});
+
+</script>
+
 {% endblock %}
 
 

@@ -6,7 +6,7 @@
  - change the issue variable to the chosen policy / social issue
 '''
 
-import os
+import os, json
 from flask import Flask, render_template, url_for, redirect, request, session, flash, jsonify
 from flask_pymongo import PyMongo
 
@@ -15,39 +15,18 @@ from flask_pymongo import PyMongo
 ### VARIABLES
 issue = '(whatever policy chosen)'
 
-reasonings = {
-    'reasoning1' : 'some reasoning',
-    'reasoning2' : 'some reasoning',
-    'reasoning3' : 'some reasoning',
-    'reasoning4' : 'some reasoning',
-    'reasoning5' : 'some reasoning'
-}
+reasonings = {'reasoning1' : 'some reasoning', 'reasoning2' : 'some reasoning', 'reasoning3' : 'some reasoning',  'reasoning4' : 'some reasoning', 'reasoning5' : 'some reasoning'}
 
 # reasonings_3 : the reasonings users need to give fairness scores for in stage3
 # ideally reasonings_3 should be dictionary, each reasoning corresponds to a fairness score
 
-reasonings_3 = {
-    'reasoning1': 3,
-    'reasoning2': 1, 
-    'reasoning3': 5, 
-    'reasoning4': 4, 
-    'reasoning5': 3, 
-    'reasoning6': 1
-}
-
-dimensions = {
-    'dim1' : 'some dimension', 
-    'dim2' : 'some dimension', 
-    'dim3' : 'some dimension'
-}
+reasonings_3 = { 'reasoning1': 3,'reasoning2': 1, 'reasoning3': 5, 'reasoning4': 4, 'reasoning5': 3, 'reasoning6': 1}
 
 
-fair_dims = {
-    'fair_dim1': 'some fairness dimension',
-    'fair_dim2': 'some fairness dimension',
-    'fair_dim3': 'some fairness dimension'
-}
 
+# V1 hardcoded dim and fair_dim
+# dimensions = { 'dim1' : 'some dimension', 'dim2' : 'some dimension', 'dim3' : 'some dimension' }
+# fair_dims = { 'fair_dim1': 'some fairness dimension', 'fair_dim2': 'some fairness dimension', 'fair_dim3': 'some fairness dimension'}
 
 
 ### ROUTES
@@ -56,7 +35,7 @@ def create_app(test_config=None):
     app = Flask('research', instance_relative_config=True)
     
     app.config.from_mapping(
-        SECRET_KEY='1234566666',
+        SECRET_KEY='nini123456',
     )
 
     app.config["MONGO_URI"] = "mongodb://localhost:27017/sutd"
@@ -76,13 +55,18 @@ def create_app(test_config=None):
         pass
 
 
+
+    ### RETRIEVING DIM AND FAIR_DIM FROM MONGO
+    dim = mongo.db.dim.find_one()
+    fair_dim = mongo.db.fair_dim.find_one()
+
     @app.route('/stage1')
     def stage1():
         return render_template('1-1.html', issue=issue)
 
     @app.route('/1-2', methods=['POST', 'GET'])
     def func_for_1_2():
-        return render_template('1-2.html', issue=issue)
+        return render_template('1-2.html')
  
 
     # only after you submit a form can you access this page
@@ -92,35 +76,42 @@ def create_app(test_config=None):
         email = request.form.get('userEmail')
         original_stance = request.form.get('original_stance')
         reasoning_for_original_stance = request.form.get('reasoning')
+        
+        session['user_stage_1'] = str(request.form.get('userName'))
 
-        # only save the user information into the database if the username does not already exist
+        # so if the database already has a specific username it won't save it
+        # (in case user goes back to previous page and submit again)
         if username and email and original_stance and reasoning_for_original_stance and not mongo.db.users.find_one({"username":username}):
-
+            
+            # initialize userID to be 1 if the users docuemnt is empty
+            if mongo.db.users.count() == 0:
+                next_id = 1
             for max_id_user in mongo.db.users.find().sort("id", -1).limit(1):
                 next_id = max_id_user["id"] + 1
-
+                
             # save the form input values in 1-2 into the database
             mongo.db.users.insert({
                 "id": next_id,
                 "username": username,
                 "email": email,
                 "original stance": original_stance,
-                "reasoning for original stance" : reasoning_for_original_stance
+                "original reasoning" : reasoning_for_original_stance
                 }) 
 
-
-        original_stance_value = int(original_stance)
-        oppo_stance = ''
-        if original_stance_value == 3:
-            oppo_stance = 'agree or disagree'
-            return render_template('1-3-2.html', oppo_stance=oppo_stance)
-        elif original_stance_value > 3:
-            oppo_stance = 'disagree'
-        else:
-            oppo_stance = 'agree'
-        session['oppo_stance'] = oppo_stance
-        return render_template('1-3.html') 
-
+            original_stance_value = int(original_stance)
+            oppo_stance = ''
+            if original_stance_value == 3:
+                oppo_stance = 'agree or disagree'
+                return render_template('1-3-2.html', oppo_stance=oppo_stance)
+            elif original_stance_value > 3:
+                oppo_stance = 'disagree'
+            else:
+                oppo_stance = 'agree'
+            session['oppo_stance'] = oppo_stance
+            return render_template('1-3.html') 
+            
+        return render_template('thank_you.html', user=session['user_stage_1'])
+    
 
         # # store the reasoning for opposite stance into the database
         # if request.form.get('oppo_reasoning'):
@@ -128,8 +119,6 @@ def create_app(test_config=None):
         #     # be careful with the mongo.db.users.update. You need all the key value pairs inside
         #     # retrieve the user in python and then append the new information to it
         #     # use session for the username
-
-
 
     @app.route('/stage2')
     def stage2():
@@ -169,11 +158,42 @@ def create_app(test_config=None):
 
 
 
-    # for debugging : can enter all the stage html templates directly in the url
-    @app.route('/<string:stageID>')
-    def goTo(stageID):
-        url = stageID + '.html'
-        return render_template(url, issue=issue)
+    @app.route('/thank_you', methods=['POST'])
+    def thank_you():
+
+        # from stage1
+        oppo_stance = session['oppo_stance']
+        oppo_reasoning = request.form.get('oppo_reasoning')
+        oppo_stance_for_neutral = request.form.get('neutral_user_oppo_stance')
+        
+        if oppo_stance_for_neutral and oppo_reasoning: 
+            data = mongo.db.users.find_one({"username" : session['user_stage_1']})
+            data['oppo_stance'] = oppo_stance_for_neutral
+            data['oppo_reasoning'] = oppo_reasoning
+            mongo.db.users.update({"username" : session['user_stage_1']}, data)
+            return render_template('/thank_you.html', user=session['user_stage_1'])
+
+        elif oppo_stance and oppo_reasoning:
+            data = mongo.db.users.find_one({"username" : session['user_stage_1']})
+            data['oppo_stance'] = oppo_stance
+            data['oppo_reasoning'] = oppo_reasoning
+            mongo.db.users.update({"username" : session['user_stage_1']}, data)
+            return render_template('/thank_you.html', user=session['user_stage_1'])
+
+        return 'nothing'
+       # from stage2
+    
+
+    @app.route('/end', methods=['POST'])
+    def end():
+        return render_template('/end.html')
+
+
+
+
+    @app.route('/favicon.ico')
+    def favicon():
+        return redirect(url_for('static', filename='favicon.ico'))
 
 
     # database testing
@@ -186,22 +206,17 @@ def create_app(test_config=None):
         else:
             return jsonify({"exists":'no'})
     
-
-    # @app.route('/thank_you', methods=['POST'])
-    # def thank_you():
-    #     if request.form.get('form-1-3-2'):
-
+    @app.route('/db')
+    def db():
+        return str(dim)
 
 
-    #         return render_template('thank_you.html')
+    # for debugging : can enter all the stage html templates directly in the url
+    @app.route('/<string:stageID>')
+    def goTo(stageID):
+        url = stageID + '.html'
+        return render_template(url, issue=issue)
 
 
-    @app.route('/end', methods=['POST'])
-    def end():
-        return render_template('/end.html')
-
-    @app.route('/favicon.ico')
-    def favicon():
-        return redirect(url_for('static', filename='favicon.ico'))
     return app
 

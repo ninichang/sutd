@@ -14,7 +14,7 @@
 
 <body>
     <div class="topBar">
-        <p id="welcome-back"> Welcome back, {{user}} </p>
+        <p id="part1" style="font-size:2.3vh"> Welcome back, {{user}} </p>
     </div>
     <div id="register-div">
         <div>
@@ -28,9 +28,9 @@
         </div>
         <br>
 
-        <form action="/thank_you" method='POST'>
+        <form action="/thank_you" method='POST' id='form-2-2'>
             {% for reason_id, reason in reasonings.items() %}
-            <div class="ui padded segment"> 
+            <div class="ui padded segment" id='form-2-2-style'> 
                 <p> 
                     {{reason}}
                 </p>
@@ -41,7 +41,7 @@
             <p id='question'> Does this reasoning fulfill the following dimensions? </p>
 
                 {% for dim_id, dim in dimensions.items() %}
-                    <div class="ui form">
+                    <div class="ui form" id='form-2-2-style'>
                             <div class="inline fields">
                                 <label> 
                                     {{dim}}: 
