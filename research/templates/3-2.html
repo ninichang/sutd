@@ -2,6 +2,7 @@
 <html lang="en">
     
 <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
@@ -22,7 +23,7 @@
                 <p> <strong>Below are 9 reasonings with assigned scores. 
                         Based on you own opinion, please indicate how fair you think the score for each reasoning is on a 1 to 5 scale. 
                         
-                        A fairness score of 5 implies that you think the score given to the reasoning is perfectly fair.                
+                        A score of 5 implies that you think the score given to the reasoning is perfectly fair.                
                     </strong>
                 </p>
             </div>
@@ -44,43 +45,41 @@
                 <div id="multiple-scale-form">
                 <p id='question'> How fair is the given score in the following dimensions? </p>
         
-                    {% for fair_dim_id, fair_dim in fair_dims.items() %}
+                    {% for dim_id, dim in dimensions.items() %}
+                    <p> <strong>{{dim}}: </strong> </p>
                         <div class="ui form">
                                 <div class="inline fields">
-                                    <label> 
-                                        {{fair_dim}}: 
-                                    </label>
                                         <div class="field">
                                             <div class="ui radio checkbox">
-                                                <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='1'>
+                                                <input type="radio" name="{{reasoning_id~dim_id}}" value='1'>
                                                     <label>1</label>
                                             </div>
                                         </div>
         
                                         <div class="field">
                                             <div class="ui radio checkbox">
-                                                <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='2'>
+                                                <input type="radio" name="{{reasoning_id~dim_id}}" value='2'>
                                                     <label>2</label>
                                             </div>
                                         </div>
         
                                         <div class="field">
                                             <div class="ui radio checkbox">
-                                                <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='3'>
+                                                <input type="radio" name="{{reasoning_id~dim_id}}" value='3'>
                                                     <label>3</label>
                                             </div>
                                         </div>
         
                                         <div class="field">
                                             <div class="ui radio checkbox">
-                                                <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='4'>
+                                                <input type="radio" name="{{reasoning_id~dim_id}}" value='4'>
                                                     <label>4</label>
                                             </div>
                                         </div>
         
                                         <div class="field">
                                             <div class="ui radio checkbox">
-                                                <input type="radio" name="{{reasoning_id~fair_dim_id}}" value='5'>
+                                                <input type="radio" name="{{reasoning_id~dim_id}}" value='5'>
                                                     <label>5</label>
                                             </div>
                                         </div>

@@ -3,7 +3,7 @@ in inline css inside html files.  */
 
 .bodyFirstPage {
     text-align: center;
-    padding-top: 30vh;
+    padding-top: 40vh;
     background-repeat: no-repeat; 
     background-size: cover;
     color: whitesmoke;
@@ -42,7 +42,7 @@ in inline css inside html files.  */
 }
 
 #register-div{
-    width: 50%;
+    width: 50vw;
     position: relative;
     top: 10%;
     left: 25%
@@ -108,8 +108,9 @@ form .buttons {
 
 #submit{
     text-align: center;
-    margin-left: 15vw;
     font-size: 2.3vh;
+    width: 50%;
+    margin-left: 25%;
 }
 
 .button#submit:hover{
@@ -177,6 +178,17 @@ body {
     display: block;
 }
 
-#form-2-2-style{
-    font-size: 2vh
+#test-input{
+    font-size: 10vw;
+}
+
+.thankYouContainer{
+    width: 100vw;
+    height: 50vh;
+}
+
+.thankYou{
+    text-align: center;
+    vertical-align: center;
+    margin-top: 10vh;
 }

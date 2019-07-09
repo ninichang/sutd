@@ -2,6 +2,7 @@
 <html lang="en">
     
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
@@ -18,7 +19,7 @@
     </div>
     <div id="register-div">
         <div>
-            <p> <strong>Below are several reasonings given by other participants. </br>
+            <p> <strong> Below are several reasonings given by other participants. </br>
                 Please give each reasoning a score based on the following dimensions. </br>
                 <br>
                 The score ranges from 1 to 5.  
@@ -30,7 +31,7 @@
 
         <form action="/thank_you" method='POST' id='form-2-2'>
             {% for reason_id, reason in reasonings.items() %}
-            <div class="ui padded segment" id='form-2-2-style'> 
+            <div class="ui padded segment"> 
                 <p> 
                     {{reason}}
                 </p>
@@ -41,43 +42,41 @@
             <p id='question'> Does this reasoning fulfill the following dimensions? </p>
 
                 {% for dim_id, dim in dimensions.items() %}
-                    <div class="ui form" id='form-2-2-style'>
+            <p> <strong>{{dim}}: </strong> </p>
+                    <div class="ui form">
                             <div class="inline fields">
-                                <label> 
-                                    {{dim}}: 
-                                </label>
                                     <div class="field">
                                         <div class="ui radio checkbox">
-                                            <input type="radio" id='1' name={{reason_id~dim_id}} value='1'>
+                                            <input type="radio" name={{reason_id~dim_id}} value='1'>
                                                 <label>1</label>
                                         </div>
                                     </div>
 
                                     <div class="field">
                                         <div class="ui radio checkbox">
-                                            <input type="radio" id='2' name={{reason_id~dim_id}} value='2'>
+                                            <input type="radio" name={{reason_id~dim_id}} value='2'>
                                                 <label>2</label>
                                         </div>
                                     </div>
 
                                     <div class="field">
                                         <div class="ui radio checkbox">
-                                            <input type="radio" id='3' name={{reason_id~dim_id}} value='3'>
+                                            <input type="radio" name={{reason_id~dim_id}} value='3'>
                                                 <label>3</label>
                                         </div>
                                     </div>
 
                                     <div class="field">
                                         <div class="ui radio checkbox">
-                                            <input type="radio" id='4' name={{reason_id~dim_id}} value='4'>
+                                            <input type="radio" name={{reason_id~dim_id}} value='4'>
                                                 <label>4</label>
                                         </div>
                                     </div>
 
                                     <div class="field">
                                         <div class="ui radio checkbox">
-                                            <input type="radio" id='5' name={{reason_id~dim_id}} value='5'>
-                                                <label>5</label>
+                                            <input type="radio" name={{reason_id~dim_id}} value='5'>
+                                                <label for={{reason_id~dim_id}}>5</label>
                                         </div>
                                     </div>
                             </div>
@@ -93,6 +92,7 @@
             <div class="bottom"></div>
         </form>
     </div>
+
 </body>
 
 </html>

@@ -13,20 +13,17 @@ from flask_pymongo import PyMongo
 
 
 ### VARIABLES
-issue = '(whatever policy chosen)'
 
 reasonings = {'reasoning1' : 'some reasoning', 'reasoning2' : 'some reasoning', 'reasoning3' : 'some reasoning',  'reasoning4' : 'some reasoning', 'reasoning5' : 'some reasoning'}
 
 # reasonings_3 : the reasonings users need to give fairness scores for in stage3
 # ideally reasonings_3 should be dictionary, each reasoning corresponds to a fairness score
-
 reasonings_3 = { 'reasoning1': 3,'reasoning2': 1, 'reasoning3': 5, 'reasoning4': 4, 'reasoning5': 3, 'reasoning6': 1}
 
 
 
-# V1 hardcoded dim and fair_dim
+# V1: hardcoded dim and fair_dim
 # dimensions = { 'dim1' : 'some dimension', 'dim2' : 'some dimension', 'dim3' : 'some dimension' }
-# fair_dims = { 'fair_dim1': 'some fairness dimension', 'fair_dim2': 'some fairness dimension', 'fair_dim3': 'some fairness dimension'}
 
 
 ### ROUTES
@@ -55,10 +52,15 @@ def create_app(test_config=None):
         pass
 
 
+    ### RETRIEVE VARIABLES FROM MONGO
+    dimensions = {}
+    for dim in mongo.db.dim.find({}, {"_id":0, "description":0}):
+        dimensions.update({dim['dimID']: dim['dimName']})
 
-    ### RETRIEVING DIM AND FAIR_DIM FROM MONGO
-    dim = mongo.db.dim.find_one()
-    fair_dim = mongo.db.fair_dim.find_one()
+    # using abortion as an example for the policy chosen
+    policy = mongo.db.policy.find_one({"policyName": "abortion"})
+    issue = policy['policyName']
+    issue_resources = policy['resources']
 
     @app.route('/stage1')
     def stage1():
@@ -66,7 +68,7 @@ def create_app(test_config=None):
 
     @app.route('/1-2', methods=['POST', 'GET'])
     def func_for_1_2():
-        return render_template('1-2.html')
+        return render_template('1-2.html', issue=issue, issue_resources=issue_resources)
  
 
     # only after you submit a form can you access this page
@@ -112,14 +114,6 @@ def create_app(test_config=None):
             
         return render_template('thank_you.html', user=session['user_stage_1'])
     
-
-        # # store the reasoning for opposite stance into the database
-        # if request.form.get('oppo_reasoning'):
-        #     mongo
-        #     # be careful with the mongo.db.users.update. You need all the key value pairs inside
-        #     # retrieve the user in python and then append the new information to it
-        #     # use session for the username
-
     @app.route('/stage2')
     def stage2():
         return render_template('2-1.html')
@@ -149,20 +143,17 @@ def create_app(test_config=None):
                 if mongo.db.users.find_one({"username":user}):
                     return render_template('3-2.html', 
                         reasonings_3=reasonings_3, 
-                        fair_dims=fair_dims,
+                        dimensions=dimensions,
                         user=user)
                 else:
                     return render_template('notRegistered.html', user=user)
         elif request.method == 'GET':
             return 'hello'
 
-
-
     @app.route('/thank_you', methods=['POST'])
     def thank_you():
 
         # from stage1
-        oppo_stance = session['oppo_stance']
         oppo_reasoning = request.form.get('oppo_reasoning')
         oppo_stance_for_neutral = request.form.get('neutral_user_oppo_stance')
         
@@ -171,14 +162,14 @@ def create_app(test_config=None):
             data['oppo_stance'] = oppo_stance_for_neutral
             data['oppo_reasoning'] = oppo_reasoning
             mongo.db.users.update({"username" : session['user_stage_1']}, data)
-            return render_template('/thank_you.html', user=session['user_stage_1'])
+            return render_template('/thank_you.html')
 
         elif oppo_stance and oppo_reasoning:
             data = mongo.db.users.find_one({"username" : session['user_stage_1']})
             data['oppo_stance'] = oppo_stance
             data['oppo_reasoning'] = oppo_reasoning
             mongo.db.users.update({"username" : session['user_stage_1']}, data)
-            return render_template('/thank_you.html', user=session['user_stage_1'])
+            return render_template('/thank_you.html')
 
         return 'nothing'
        # from stage2
@@ -189,14 +180,12 @@ def create_app(test_config=None):
         return render_template('/end.html')
 
 
-
-
     @app.route('/favicon.ico')
     def favicon():
         return redirect(url_for('static', filename='favicon.ico'))
 
 
-    # database testing
+    # database see if username exists or not
     @app.route('/testing-<string:userName>')
     def testing(userName):
         if userName == ' ':
@@ -206,12 +195,15 @@ def create_app(test_config=None):
         else:
             return jsonify({"exists":'no'})
     
-    @app.route('/db')
-    def db():
-        return str(dim)
+    @app.route('/dim')
+    def dim():
+        return str(dimensions)
 
+    @app.route('/fair_dim')
+    def fair_dim():
+        return str(fair_dim)
 
-    # for debugging : can enter all the stage html templates directly in the url
+    # for debugging : can enter all the html templates directly in the url
     @app.route('/<string:stageID>')
     def goTo(stageID):
         url = stageID + '.html'
