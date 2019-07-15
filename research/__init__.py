@@ -21,7 +21,6 @@ reasonings = {'reasoning1' : 'some reasoning', 'reasoning2' : 'some reasoning', 
 reasonings_3 = { 'reasoning1': 3,'reasoning2': 1, 'reasoning3': 5, 'reasoning4': 4, 'reasoning5': 3, 'reasoning6': 1}
 
 
-
 # V1: hardcoded dim and fair_dim
 # dimensions = { 'dim1' : 'some dimension', 'dim2' : 'some dimension', 'dim3' : 'some dimension' }
 
@@ -54,13 +53,14 @@ def create_app(test_config=None):
 
     ### RETRIEVE VARIABLES FROM MONGO
     dimensions = {}
-    for dim in mongo.db.dim.find({}, {"_id":0, "description":0}):
+    for dim in mongo.db.dim.find({}, {"_id":0, "desc":0}):
         dimensions.update({dim['dimID']: dim['dimName']})
 
-    # using abortion as an example for the policy chosen
+    # using policyName to match the policy chosen 
     policy = mongo.db.policy.find_one({"policyName": "abortion"})
     issue = policy['policyName']
     issue_resources = policy['resources']
+    issue_id = policy['policyID']
 
     @app.route('/stage1')
     def stage1():
@@ -81,24 +81,33 @@ def create_app(test_config=None):
         
         session['user_stage_1'] = str(request.form.get('userName'))
 
-        # so if the database already has a specific username it won't save it
+        # if the database already has the username it won't save it
         # (in case user goes back to previous page and submit again)
         if username and email and original_stance and reasoning_for_original_stance and not mongo.db.users.find_one({"username":username}):
             
             # initialize userID to be 1 if the users docuemnt is empty
             if mongo.db.users.count() == 0:
                 next_id = 1
-            for max_id_user in mongo.db.users.find().sort("id", -1).limit(1):
-                next_id = max_id_user["id"] + 1
+            for max_id_user in mongo.db.users.find().sort("userID", -1).limit(1):
+                next_id = max_id_user["userID"] + 1
                 
-            # save the form input values in 1-2 into the database
+            session['userID'] = next_id
+
+            # store info into "users" collection
             mongo.db.users.insert({
-                "id": next_id,
+                "userID": next_id,
                 "username": username,
                 "email": email,
-                "original stance": original_stance,
-                "original reasoning" : reasoning_for_original_stance
+                "policyID": issue_id
                 }) 
+
+            # insert original stance and reasonings into "reasonings" collection
+            mongo.db.reasonings.insert({
+                "reasoning": reasoning_for_original_stance,
+                "reasoningID": float(str(str(next_id) + '.1')),
+                "stance": original_stance,
+                "policyID" : issue_id,
+            })
 
             original_stance_value = int(original_stance)
             oppo_stance = ''
@@ -122,11 +131,46 @@ def create_app(test_config=None):
     def func_for_2_2():
         if request.method == 'POST':
             session['user_stage_2'] = str(request.form.get('inputUserName'))
+
+            # after user enter userName, check if this user exists
             if mongo.db.users.find_one({"username":session['user_stage_2']}):
+
+                # if user exists, show their responses in stage1
+
+                # retrieve userID as a key to match the reasonings
+                userID = mongo.db.users.find_one({"username":session['user_stage_2']})['userID']
+                
+
+                original = mongo.db.reasonings.find_one({"reasoningID":float(str(userID) + '.1')})
+                imagined = mongo.db.reasonings.find_one({"reasoningID":float(str(userID) + '.2')})
+
+                reasoning_original = original['reasoning']
+                reasoning_imagined = imagined['reasoning']
+                stance_original = original['stance']
+                stance_imagined = imagined['stance']
+
+                if stance_original == '1':
+                    stance_original = 'strongly disagree'
+                elif stance_original == '2':
+                    stance_original = 'disagree'
+                elif stance_original == '3':
+                    stance_original = 'neutral'
+                elif stance_original == '4':
+                    stance_original = 'agree'
+                else:
+                    stance_original = 'strongly agree'
+
                 return render_template('2-2.html', 
+                    issue=issue,
                     reasonings=reasonings, 
                     dimensions=dimensions, 
-                    user=session['user_stage_2'])
+                    user=session['user_stage_2'],
+                    reasoning_original=reasoning_original,
+                    reasoning_imagined=reasoning_imagined,
+                    stance_original=stance_original,
+                    stance_imagined=stance_imagined
+                )
+
             else:
                 return render_template('notRegistered.html', user=session['user_stage_2'])
 
@@ -153,23 +197,41 @@ def create_app(test_config=None):
     @app.route('/thank_you', methods=['POST'])
     def thank_you():
 
-        # from stage1
+        # from stage1 : oppo side
         oppo_reasoning = request.form.get('oppo_reasoning')
         oppo_stance_for_neutral = request.form.get('neutral_user_oppo_stance')
         
+        # if the user is neutral originally 
         if oppo_stance_for_neutral and oppo_reasoning: 
-            data = mongo.db.users.find_one({"username" : session['user_stage_1']})
-            data['oppo_stance'] = oppo_stance_for_neutral
-            data['oppo_reasoning'] = oppo_reasoning
-            mongo.db.users.update({"username" : session['user_stage_1']}, data)
+
+            # store the imagined reasoning into "reasonings" collection
+            mongo.db.reasonings.insert({
+                "reasoningID": float(str(str(session['userID']) + '.2')),
+                "reasoning": oppo_reasoning,
+                "stance": oppo_stance_for_neutral,
+                "policyID" : issue_id
+            })
+
             return render_template('/thank_you.html')
 
-        elif oppo_stance and oppo_reasoning:
+
+        # if the user is not neutral originally
+        else:
             data = mongo.db.users.find_one({"username" : session['user_stage_1']})
-            data['oppo_stance'] = oppo_stance
+            data['oppo_stance'] = session['oppo_stance']
             data['oppo_reasoning'] = oppo_reasoning
-            mongo.db.users.update({"username" : session['user_stage_1']}, data)
+            # mongo.db.users.update({"username" : session['user_stage_1']}, data)
+
+            # store the imagined reasoning into "reasonings" collection
+            mongo.db.reasonings.insert({
+                "reasoningID": float(str(str(session['userID']) + '.2')),
+                "reasoning": oppo_reasoning,
+                "stance": session['oppo_stance'],
+                "policyID" : issue_id,
+            })
+
             return render_template('/thank_you.html')
+
 
         return 'nothing'
        # from stage2

@@ -19,6 +19,35 @@
     </div>
     <div id="register-div">
         <div>
+            <img src="{{url_for('static', filename='light_bulb.png')}}" width="30px">
+            <strong> RECAP: </strong> 
+            <p>
+                In the previous stage of this reserach, you indicated that you are 
+                <strong> {{ stance_original }} </strong> about {{ issue }}. 
+                The reasoning you gave was : 
+                
+            </p>
+            <div class="ui message">
+                <div class="header">
+                    {{ stance_original }}
+                </div>
+                <p> {{ reasoning_original}}</p>
+            </div>
+
+            <br>
+
+            <p>
+                In addition, if you were to <strong> {{ stance_imagined}}  </strong>
+                with {{ issue }}, your reasoning was : 
+            </p>
+            <div class="ui message">
+                <div class="header">
+                    {{ stance_imagined }}
+                </div>
+                <p> {{ reasoning_imagined}}</p>
+            </div>
+                   
+            <div class="ui hidden divider"></div>
             <p> <strong> Below are several reasonings given by other participants. </br>
                 Please give each reasoning a score based on the following dimensions. </br>
                 <br>
